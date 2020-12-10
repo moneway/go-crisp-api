@@ -364,11 +364,16 @@ func (service *WebsiteService) ListPeopleProfiles(websiteID string, pageNumber u
 
 
 // AddNewPeopleProfile adds a new people profile.
-func (service *WebsiteService) AddNewPeopleProfile(websiteID string, peopleProfile PeopleProfileUpdateCard) (*Response, error) {
+func (service *WebsiteService) AddNewPeopleProfile(websiteID string, peopleProfile PeopleProfileUpdateCard) (*PeopleProfile, *Response, error) {
   url := fmt.Sprintf("website/%s/people/profile", websiteID)
   req, _ := service.client.NewRequest("POST", url, peopleProfile)
 
-  return service.client.Do(req, nil)
+  profile := new(PeopleProfileData)
+  resp, err := service.client.Do(req, profile)
+  if err != nil {
+    return nil, resp, err
+  }
+  return profile.Data, resp, err
 }
 
 
